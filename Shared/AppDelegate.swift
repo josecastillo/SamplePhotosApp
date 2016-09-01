@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     var window: UIWindow?
 
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    private func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: Any]?) -> Bool {
         // Override point for customization after application launch.
         let splitViewController = self.window!.rootViewController as! UISplitViewController
         #if os(iOS)
@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         return false
     }
 
-    func splitViewController(_ splitViewController: UISplitViewController, showDetail vc: UIViewController, sender: AnyObject?) -> Bool {
+    private func splitViewController(_ splitViewController: UISplitViewController, showDetail vc: UIViewController, sender: AnyObject?) -> Bool {
         // Let the storyboard handle the segue for every case except going from detail:assetgrid to detail:asset.
         guard !splitViewController.isCollapsed else { return false }
         guard !(vc is UINavigationController) else { return false }
@@ -57,6 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 /// ObjC generics and imported into Swift, but these two methods aren't (because methods can't be generic
 /// in ObjC). This extension wraps the type-casting necessary to preserve generic type parameters all
 /// the way through from a PHFetchResult to a PHChange to a PHFetchResultChangeDetails to another PHFetchResult.
+/*
 extension PHChange {
     func changeDetails<T: PHObject>(for object: T) -> PHObjectChangeDetails<T>? {
         return self.changeDetails(for: object) as! PHObjectChangeDetails<T>?
@@ -65,3 +66,4 @@ extension PHChange {
         return self.changeDetails(for: fetchResult)
     }
 }
+*/

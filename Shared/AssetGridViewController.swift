@@ -27,9 +27,9 @@ class AssetGridViewController: UICollectionViewController {
 
     @IBOutlet var addButtonItem: UIBarButtonItem!
 
-    private let imageManager = PHCachingImageManager()
-    private var thumbnailSize: CGSize!
-    private var previousPreheatRect = CGRect.zero
+    fileprivate let imageManager = PHCachingImageManager()
+    fileprivate var thumbnailSize: CGSize!
+    fileprivate var previousPreheatRect = CGRect.zero
 
     // MARK: UIViewController / Lifecycle
 
@@ -73,7 +73,7 @@ class AssetGridViewController: UICollectionViewController {
         updateCachedAssets()
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destination = segue.destination as? AssetViewController
             else { fatalError("unexpected view controller for segue") }
 
@@ -92,7 +92,7 @@ class AssetGridViewController: UICollectionViewController {
         let asset = fetchResult.object(at: indexPath.item)
 
         // Dequeue a GridViewCell.
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(GridViewCell.self), for: indexPath) as? GridViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: GridViewCell.self), for: indexPath) as? GridViewCell
             else { fatalError("unexpected cell in collection view") }
 
         #if os(iOS)
@@ -124,12 +124,12 @@ class AssetGridViewController: UICollectionViewController {
 
     // MARK: Asset Caching
 
-    private func resetCachedAssets() {
+    fileprivate func resetCachedAssets() {
         imageManager.stopCachingImagesForAllAssets()
         previousPreheatRect = .zero
     }
 
-    private func updateCachedAssets() {
+    fileprivate func updateCachedAssets() {
         // Update only if the view is visible.
         guard isViewLoaded && view.window != nil else { return }
 
@@ -159,7 +159,7 @@ class AssetGridViewController: UICollectionViewController {
         previousPreheatRect = preheatRect
     }
 
-    private func differencesBetweenRects(_ old: CGRect, _ new: CGRect) -> (added: [CGRect], removed: [CGRect]) {
+    fileprivate func differencesBetweenRects(_ old: CGRect, _ new: CGRect) -> (added: [CGRect], removed: [CGRect]) {
         if old.intersects(new) {
             var added = [CGRect]()
             if new.maxY > old.maxY {

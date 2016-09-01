@@ -17,8 +17,9 @@ class MasterViewController: UITableViewController {
         case allPhotos = 0
         case smartAlbums
         case userCollections
+        case moments
 
-        static let count = 3
+        static let count = 4
     }
 
     enum CellIdentifier: String {
@@ -34,7 +35,8 @@ class MasterViewController: UITableViewController {
     var allPhotos: PHFetchResult<PHAsset>!
     var smartAlbums: PHFetchResult<PHAssetCollection>!
     var userCollections: PHFetchResult<PHCollection>!
-    let sectionLocalizedTitles = ["", NSLocalizedString("Smart Albums", comment: ""), NSLocalizedString("Albums", comment: "")]
+    var moments: PHFetchResult<PHAssetCollection>!
+    let sectionLocalizedTitles = ["", NSLocalizedString("Smart Albums", comment: ""), NSLocalizedString("Albums", comment: ""), NSLocalizedString("Moments", comment: "")]
 
     // MARK: UIViewController / Lifecycle
     
@@ -51,6 +53,7 @@ class MasterViewController: UITableViewController {
         allPhotos = PHAsset.fetchAssets(with: allPhotosOptions)
         smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
         userCollections = PHCollectionList.fetchTopLevelUserCollections(with: nil)
+        moments = PHAssetCollection.fetchAssetCollections(with: .moment, subtype: .albumRegular, options: nil)
 
         PHPhotoLibrary.shared().register(self)
 
@@ -89,7 +92,7 @@ class MasterViewController: UITableViewController {
 
     // MARK: Segues
 
-    override func prepare(for segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
         guard let destination = (segue.destination as? UINavigationController)?.topViewController as? AssetGridViewController
             else { fatalError("unexpected view controller for segue") }
@@ -110,6 +113,8 @@ class MasterViewController: UITableViewController {
                         collection = smartAlbums.object(at: indexPath.row)
                     case .userCollections:
                         collection = userCollections.object(at: indexPath.row)
+                    case .moments:
+                        collection = moments.object(at: indexPath.row)
                     default: return // not reached; all photos section already handled by other segue
                 }
 
@@ -132,6 +137,7 @@ class MasterViewController: UITableViewController {
             case .allPhotos: return 1
             case .smartAlbums: return smartAlbums.count
             case .userCollections: return userCollections.count
+            case .moments: return moments.count
         }
     }
 
@@ -151,6 +157,11 @@ class MasterViewController: UITableViewController {
             case .userCollections:
                 let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.collection.rawValue, for: indexPath)
                 let collection = userCollections.object(at: indexPath.row)
+                cell.textLabel!.text = collection.localizedTitle
+                return cell
+            case .moments:
+                let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.collection.rawValue, for: indexPath)
+                let collection = moments.object(at: indexPath.row)
                 cell.textLabel!.text = collection.localizedTitle
                 return cell
         }

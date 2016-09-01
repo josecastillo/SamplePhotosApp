@@ -30,12 +30,12 @@ class AssetViewController: UIViewController {
     @IBOutlet var trashButton: UIBarButtonItem!
     @IBOutlet var favoriteButton: UIBarButtonItem!
 
-    private var playerLayer: AVPlayerLayer!
-    private var isPlayingHint = false
+    fileprivate var playerLayer: AVPlayerLayer!
+    fileprivate var isPlayingHint = false
 
-    private lazy var formatIdentifier = Bundle.main.bundleIdentifier!
-    private let formatVersion = "1.0"
-    private lazy var ciContext = CIContext()
+    fileprivate lazy var formatIdentifier = Bundle.main.bundleIdentifier!
+    fileprivate let formatVersion = "1.0"
+    fileprivate lazy var ciContext = CIContext()
 
     // MARK: UIViewController / Lifecycle
 
@@ -172,12 +172,12 @@ class AssetViewController: UIViewController {
             // Remove asset from album
             PHPhotoLibrary.shared().performChanges({
                 let request = PHAssetCollectionChangeRequest(for: self.assetCollection)!
-                request.removeAssets([self.asset])
+                request.removeAssets(NSArray(array: [self.asset]))
             }, completionHandler: completion)
         } else {
             // Delete asset from library
             PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.deleteAssets([self.asset])
+                PHAssetChangeRequest.deleteAssets(NSArray(array: [self.asset]))
             }, completionHandler: completion)
         }
 
@@ -334,7 +334,7 @@ class AssetViewController: UIViewController {
                     output.adjustmentData = adjustmentData
 
                     // Select a filtering function for the asset's media type.
-                    let applyFunc: (String, input: PHContentEditingInput, output: PHContentEditingOutput, completion: () -> ()) -> ()
+                    let applyFunc: (String, _ input: PHContentEditingInput, _ output: PHContentEditingOutput, _ completion: @escaping () -> ()) -> ()
                     if self.asset.mediaSubtypes.contains(.photoLive) {
                         applyFunc = self.applyLivePhotoFilter
                     } else if self.asset.mediaType == .image {
@@ -344,7 +344,7 @@ class AssetViewController: UIViewController {
                     }
 
                     // Apply the filter.
-                    applyFunc(filterName, input: input, output: output, completion: {
+                    applyFunc(filterName, input, output, {
                         // When rendering is done, commit the edit to the Photos library.
                         PHPhotoLibrary.shared().performChanges({
                             let request = PHAssetChangeRequest(for: self.asset)
@@ -380,7 +380,7 @@ class AssetViewController: UIViewController {
         completion()
     }
 
-    func applyLivePhotoFilter(_ filterName: String, input: PHContentEditingInput, output: PHContentEditingOutput, completion: () -> ()) {
+    func applyLivePhotoFilter(filterName: String, _ input: PHContentEditingInput, _ output: PHContentEditingOutput, _ completion: @escaping () -> ()) {
 
         // This app filters assets only for output. In an app that previews
         // filters while editing, create a livePhotoContext early and reuse it
@@ -400,7 +400,7 @@ class AssetViewController: UIViewController {
         }
     }
 
-    func applyVideoFilter(_ filterName: String, input: PHContentEditingInput, output: PHContentEditingOutput, completion: () -> ()) {
+    func applyVideoFilter(filterName: String, _ input: PHContentEditingInput, _ output: PHContentEditingOutput, _ completion: @escaping () -> ()) {
         // Load AVAsset to process from input.
         guard let avAsset = input.audiovisualAsset
             else { fatalError("can't get AV asset to edit") }
